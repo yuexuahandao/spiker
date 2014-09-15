@@ -5,11 +5,15 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import org.apache.http.client.HttpClient;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpException;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 
 public class DownLoadFile {
 
@@ -48,49 +52,52 @@ public class DownLoadFile {
 	}
 
 	// 下载 URL 指向的网页
-	public String downloadFile(String url) {
+	public String downloadFile(String url) throws HttpException {
 		String filePath = null;
 		// 1.生成 HttpClinet 对象并设置参数
 		CloseableHttpClient httpclient = HttpClients.createDefault();
 		// 设置 HTTP 连接超时 5s
-		RequestConfig requestConfig = RequestConfig.custom()  
-			    .setConnectionRequestTimeout(500).setConnectTimeout(5000)  
-			    .setSocketTimeout(500).build();
+		RequestConfig requestConfig = RequestConfig.custom()
+				.setConnectionRequestTimeout(500).setConnectTimeout(5000)
+				.setSocketTimeout(500).build();
 		// 2.生成 GetMethod 对象并设置参数
 		HttpGet httpGet = new HttpGet(url);
 		httpGet.setConfig(requestConfig);
+		System.out.println("Executing request " + httpGet.getRequestLine());
 		// 设置 get 请求超时 5s
-		//getMethod.getParams().setParameter(HttpMethodParams.SO_TIMEOUT, 5000);
+		// getMethod.getParams().setParameter(HttpMethodParams.SO_TIMEOUT,
+		// 5000);
 		// 设置请求重试处理
-		//getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER,
-		//		new DefaultHttpMethodRetryHandler());
+		// getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER,
+		// new DefaultHttpMethodRetryHandler());
 		// 3.执行 HTTP GET 请求
-		try {
-			int statusCode = httpClient.executeMethod(getMethod);
-			// 判断访问的状态码
-			if (statusCode != HttpStatus.SC_OK) {
-				System.err.println("Method failed: "
-						+ getMethod.getStatusLine());
-				filePath = null;
+		try {		
+			CloseableHttpResponse response = httpclient.execute(httpGet);
+			int status = response.getStatusLine().getStatusCode();
+			
+			if (status >= 200 && status < 300) {
+				HttpEntity entity = response.getEntity();
+				String context = entity != null ? EntityUtils.toString(entity)
+						: null;
+				filePath = "temp\\"
+						+ getFileNameByUrl(url, response.getHeaders(
+						"Content-Type")[0].getValue());
+				saveToLocal(context.getBytes(), filePath);
+			} else {
+				throw new ClientProtocolException(
+						"Unexpected response status: " + status);
 			}
-			// 4.处理 HTTP 响应内容
-			byte[] responseBody = getMethod.getResponseBody();// 读取为字节数组
-			// 根据网页 url 生成保存时的文件名
-			filePath = "temp\\"
-					+ getFileNameByUrl(url,
-							getMethod.getResponseHeader("Content-Type")
-									.getValue());
-			saveToLocal(responseBody, filePath);
-		} catch (HttpException e) {
-			// 发生致命的异常,可能是协议不对或者返回的内容有问题
-			System.out.println("Please check your provided http address!");
-			e.printStackTrace();
+
 		} catch (IOException e) {
 			// 发生网络异常
 			e.printStackTrace();
 		} finally {
 			// 释放连接
-			getMethod.releaseConnection();
+			try {
+				httpclient.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 		return filePath;
 	}
