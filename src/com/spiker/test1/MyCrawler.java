@@ -63,9 +63,9 @@ public class MyCrawler {
         while(!LinkQueue.unVisitedUrlsEmpty()
             &&LinkQueue.getVisitedUrlNum()<=1000) {
             //队头 URL 出队列
-            String visitUrl=(String)LinkQueue.unVisitedUrlDeQueue();
+			String visitUrl = (String)LinkQueue.unVisitedUrlDeQueue();
 
-            if(visitUrl==null) {
+            if( visitUrl==null ) {
                 continue;
             }
 
@@ -75,13 +75,15 @@ public class MyCrawler {
             	downLoader.downloadFile(visitUrl);
         	} catch(Exception e) {
         		e.printStackTrace();
+        		LinkQueue.addVisitedUrl(visitUrl);
+        		continue;
         	}
             //该 URL 放入已访问的 URL 中
             LinkQueue.addVisitedUrl(visitUrl);
             //提取出下载网页中的 URL
             Set<String> links = HtmlParserTool.extracLinks(visitUrl,filter);
             //新的未访问的 URL 入队
-            for(String link :links) {
+            for(String link : links) {
                 LinkQueue.addUnvisitedUrl(link);
             }
         }
