@@ -24,7 +24,7 @@ public class TestUrl {
 		 * System.out.println(s); } catch (MalformedURLException e) {
 		 * e.printStackTrace(); } catch (IOException e) { e.printStackTrace(); }
 		 */
-		CloseableHttpClient httpclient = HttpClients.createDefault();
+		/*CloseableHttpClient httpclient = HttpClients.createDefault();
 		try {
 			HttpGet httpGet = new HttpGet("http://www.baidu.com/s?wd=%E4%B8%AD%E5%9B%BD%E7%94%B5%E4%BF%A1&ie=utf-8&tn=19045005_17_pg");
 			System.out.println("Executing request " + httpGet.getRequestLine());
@@ -46,7 +46,8 @@ public class TestUrl {
 			};
 			String responseBody = httpclient.execute(httpGet, responseHandler);
 			System.out.println("----------------------------------------");
-			System.out.println(responseBody);
+			//System.out.println(responseBody);
+			HtmlParserTool.extracLinks(responseBody,null);
 		} catch (ClientProtocolException e2) {
 			e2.printStackTrace();
 		} catch (Exception e) {
@@ -57,7 +58,11 @@ public class TestUrl {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-		}
+		}*/
+
+		MyCrawler crawler = new MyCrawler();
+        crawler.crawling(new String[]{"http://www.lietu.com"});
+
 	}
 
 }

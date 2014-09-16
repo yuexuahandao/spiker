@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project name="spiker" default="run" basedir=".">
+	<property name="src" value="src" />
+	<property name="dest" value="bin" />
+	<property name="lib" value="lib" />
+	<property name="spiker_jar" value="spiker.jar" />
+
+	<path id="project.class.path">  
+        <pathelement path="${lib}" />  
+        <fileset dir="${lib}">  
+            <include name="**/*.jar" />  
+        </fileset>  
+    </path>  
+
+	<target name="clean">
+		<echo message="clean all the files" />
+		<delete dir="${dest}" />
+		<delete file="${spiker}" />
+	</target>
+
+	<target name="init">
+		<echo message="init fold of ${dest} ......" />
+		<mkdir dir="${dest}" />
+	</target>
+
+	<target name="compile" depends="init">
+		<description>compile all the source code</description>
+		<echo message="compile ${src} to ${dest} ......" />
+		<javac srcdir="${src}" destdir="${dest}" >
+			<classpath refid="project.class.path"></classpath>
+		</javac>
+	</target>
+
+	<target name="build" depends="compile">
+		<echo message="formate jars ......" />
+		<jar jarfile="${spiker_jar}" basedir="${dest}">
+			<manifest>  
+                <attribute name="Main-Class" value="com.spiker.test1.TestUrl"/>
+            </manifest>  
+		</jar>
+	</target>
+	
+	<target name="run" depends="build">
+		<java classname="com.spiker.test1.TestUrl" classpath="${spiker_jar}">
+			<classpath refid="project.class.path"></classpath>
+		</java>
+	</target>
+
+
+<!--
+	<target name="run" depends="build">
+		<java jar="${spiker_jar}">
+			<classpath refid="project.class.path"></classpath>
+			<manifest>  
+                <attribute name="Main-Class" value="com.spiker.test1.TestUrl"/>
+            </manifest>  
+		</java>
+	</target>
+-->
+</project>

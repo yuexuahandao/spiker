@@ -58,8 +58,8 @@ public class DownLoadFile {
 		CloseableHttpClient httpclient = HttpClients.createDefault();
 		// 设置 HTTP 连接超时 5s
 		RequestConfig requestConfig = RequestConfig.custom()
-				.setConnectionRequestTimeout(500).setConnectTimeout(5000)
-				.setSocketTimeout(500).build();
+				.setConnectionRequestTimeout(5000).setConnectTimeout(5000)
+				.setSocketTimeout(5000).build();
 		// 2.生成 GetMethod 对象并设置参数
 		HttpGet httpGet = new HttpGet(url);
 		httpGet.setConfig(requestConfig);
