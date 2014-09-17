@@ -14,6 +14,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
+
 public class TestUrl {
 
 	public static void main(String[] args) {
@@ -60,8 +61,10 @@ public class TestUrl {
 			}
 		}*/
 
-		MyCrawler crawler = new MyCrawler();
-        crawler.crawling(new String[]{"http://www.lietu.com"});
+		/*MyCrawler crawler = new MyCrawler();
+        crawler.crawling(new String[]{"http://www.lietu.com"});*/
+
+        com.spiker.util.SimpleBloomFilter.main(args);
 
 	}
 

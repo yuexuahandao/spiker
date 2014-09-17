@@ -79,7 +79,7 @@ public class DownLoadFile {
 				HttpEntity entity = response.getEntity();
 				String context = entity != null ? EntityUtils.toString(entity)
 						: null;
-				filePath = "temp\\"
+				filePath = "temp/"
 						+ getFileNameByUrl(url, response.getHeaders(
 						"Content-Type")[0].getValue());
 				saveToLocal(context.getBytes(), filePath);
